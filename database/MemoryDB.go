@@ -6,7 +6,7 @@ type Pokemon struct {
 	Type string `json:"Type"`
 }
 
-var PokemonDb = []Pokemon{
+var PokemonDB = []Pokemon{
 	Pokemon{ID: "1", Name: "Pikachu", Type: "Electric"},
 	Pokemon{ID: "2", Name: "Charmeleon", Type: "Fire"},
 }
