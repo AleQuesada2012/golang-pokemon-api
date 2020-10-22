@@ -64,7 +64,7 @@ func handleRequests() {
 	myRouter.HandleFunc("/pokemon", getAllPokemon).Methods("GET")
 	myRouter.HandleFunc("/pokemon/add", addNewPokemon).Methods("POST")
 	myRouter.HandleFunc("/pokemon/{id}", getPokemonWithIndex).Methods("GET")
-	log.Fatal(http.ListenAndServe(":8095", myRouter))
+	log.Fatal(http.ListenAndServe(":" +port, myRouter))
 }
 
 func commonMiddleware(next http.Handler) http.Handler {
