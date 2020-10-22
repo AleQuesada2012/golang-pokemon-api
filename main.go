@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"pokemon-api/database"
 )
 type pokeArr [] database.Pokemon
@@ -35,11 +36,16 @@ func addNewPokemon(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRequests() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "80"
+
+	}
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.Use(commonMiddleware)
 	myRouter.HandleFunc("/pokemon", getAllPokemon).Methods("GET")
 	myRouter.HandleFunc("/pokemon/add", addNewPokemon).Methods("POST")
-	log.Fatal(http.ListenAndServe(":8095", myRouter))
+	log.Fatal(http.ListenAndServe(":"+port, myRouter))
 }
 
 func commonMiddleware(next http.Handler) http.Handler {
