@@ -16,6 +16,24 @@ func getAllPokemon(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(database.PokemonDB)
 
 }
+
+func getPokemonWithIndex(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["id"]
+	found := false
+	for _, pokemon := range database.PokemonDB {
+		if pokemon.ID == key {
+			json.NewEncoder(w).Encode(pokemon)
+			found = true
+			w.WriteHeader(http.StatusFound)
+		}
+	}
+	if !found {
+		// reply with 404 showing that the ID written in the request is not in the DB
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
 func addNewPokemon(w http.ResponseWriter, r *http.Request) {
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	var pokemon database.Pokemon
@@ -32,7 +50,7 @@ func addNewPokemon(w http.ResponseWriter, r *http.Request) {
 	if  !found {
 		database.PokemonDB = append(database.PokemonDB, pokemon)
 	}
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusOK) // 200
 }
 
 func handleRequests() {
@@ -45,11 +63,12 @@ func handleRequests() {
 	myRouter.Use(commonMiddleware)
 	myRouter.HandleFunc("/pokemon", getAllPokemon).Methods("GET")
 	myRouter.HandleFunc("/pokemon/add", addNewPokemon).Methods("POST")
-	log.Fatal(http.ListenAndServe(":"+port, myRouter))
+	myRouter.HandleFunc("/pokemon/{id}", getPokemonWithIndex).Methods("GET")
+	log.Fatal(http.ListenAndServe(":8095", myRouter))
 }
 
 func commonMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
 	})
