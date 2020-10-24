@@ -53,11 +53,11 @@ func TestAddPokemon(t *testing.T) {
 	handler := http.HandlerFunc(addNewPokemon)
 	handler.ServeHTTP(reqResponse, request)
 	if status := reqResponse.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong code. got %v wanted %v", status, http.StatusOK)
+		t.Errorf("handler returned wrong code. got:  %v wanted: %v", status, http.StatusOK)
 	}
 	expected := reqResponse.Body.String()
 
 	if ! (len(expected) == 0) {
-		t.Errorf("returned unwanted body. got %v expected none",expected)
+		t.Errorf("returned unwanted body. got:  %v expected none",expected)
 	}
 }
